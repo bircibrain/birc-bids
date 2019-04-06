@@ -1,0 +1,491 @@
+# --------------------------------------------------------------------------------
+# This is a bidsmap YAML file with the key-value mappings for the different BIDS
+# modalities (anat, func, dwi, etc). The modality attributes are the keys that map
+# onto the BIDS labels. The bidsmap data-structure should be 5 levels deep:
+# dict > dict > list > dict > dict
+#
+# NB:
+# 1) Edit the bidsmap file to your needs before feeding it to bidscoiner.py
+# 2) (Institute) users may create their own bidsmap_[template].yaml or
+#    bidsmap_[sample].yaml file
+#
+# For more information, see:
+# https://github.com/Donders-Institute/bidscoin
+# https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+# --------------------------------------------------------------------------------
+
+
+Options:
+# --------------------------------------------------------------------------------
+# General options
+# --------------------------------------------------------------------------------
+  version: 1.6                                    # BIDScoin version (should correspond with the version in ../bidscoin/version.txt)
+  dcm2niix:                                       # See dcm2niix -h and https://www.nitrc.org/plugins/mwiki/index.php/dcm2nii:MainPage#General_Usage for more info
+    path: /usr/local/bin/                    # Command to set the path to dcm2niix (note the semi-colon), e.g. module add dcm2niix/1.0.20180622; or PATH=/opt/dcm2niix/bin:$PATH; or /opt/dcm2niix/bin/ or '"C:\Program Files\dcm2niix\"' (note the quotes to deal with the whitespace)
+    args: -b y -z y -i n                          # Argument string that is passed to dcm2niix. Tip: SPM users may want to use '-z n' (which produces unzipped nifti's, see dcm2niix -h for more information)
+
+
+DICOM:
+# --------------------------------------------------------------------------------
+# DICOM key-value heuristics (DICOM fields that are mapped to the BIDS labels)
+# --------------------------------------------------------------------------------
+  participant_label: ~                            # A <<DICOM attribute>> that is used as participant_label instead of the subject-label from the sourcefolder
+  session_label: ~                                # A <<DICOM attribute>> that is used as session_label instead of the session-label from the sourcefolder
+  anat:       # ----------------------- All anatomical series --------------------
+  - attributes: &anatattributes
+      SeriesDescription: ~
+      SequenceVariant: ~
+      SequenceName: ~
+      ScanningSequence: ~
+      MRAcquisitionType: ~
+      FlipAngle: ~
+      EchoNumbers: ~
+      EchoTime: ~
+      RepetitionTime: ~
+      ImageType: ~
+      ProtocolName: ~
+      PhaseEncodingDirection: ~
+    bids: &anatbids
+      acq_label: <SeriesDescription>
+      rec_label: ~
+      run_index: <<1>>
+      mod_label: ~
+      modality_label: T2w
+      ce_label: ~
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: T1w
+      echo_index: <EchoNumbers>
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: T1rho
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: T1map
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: T2map
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: T2star
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: FLAIR
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: FLASH
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: PD
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: PDmap
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: PDT2
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: inplaneT1
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: inplaneT2
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: angio
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: defacemask
+  - attributes: *anatattributes
+    bids:
+      <<: *anatbids
+      modality_label: SWImagandphase
+
+  func:       # ----------------------- All functional series --------------------
+  - attributes: &funcattributes
+      SeriesDescription: ~
+      SequenceVariant: ~
+      SequenceName: ~
+      ScanningSequence: ~
+      MRAcquisitionType: ~
+      FlipAngle: ~
+      EchoNumbers: ~
+      EchoTime: ~
+      RepetitionTime: ~
+      ImageType: ~
+      ProtocolName: ~
+      PhaseEncodingDirection: ~
+    bids: &funcbids
+      task_label: <SeriesDescription>
+      acq_label: ~
+      rec_label: ~
+      run_index: <<1>>
+      echo_index: <EchoNumbers>
+      suffix: bold
+  - attributes: *funcattributes
+    bids:
+      <<: *funcbids
+      suffix: sbref
+
+  dwi:        # ----------------------- All diffusion series ---------------------
+  - attributes: &dwiattributes
+      SeriesDescription: ~
+      SequenceVariant: ~
+      SequenceName: ~
+      ScanningSequence: ~
+      MRAcquisitionType: ~
+      FlipAngle: ~
+      EchoNumbers: ~
+      EchoTime: ~
+      RepetitionTime: ~
+      ImageType: ~
+      ProtocolName: ~
+      PhaseEncodingDirection: ~
+    bids: &dwibids
+      acq_label: <SeriesDescription>
+      run_index: <<1>>
+      suffix: dwi
+  - attributes: *dwiattributes
+    bids:
+      <<: *dwibids
+      suffix: sbref
+
+  fmap:       # ----------------------- All fieldmap series ----------------------
+  - attributes: &fmapattributes
+      SeriesDescription: ~
+      SequenceVariant: ~
+      SequenceName: ~
+      ScanningSequence: ~
+      MRAcquisitionType: ~
+      FlipAngle: ~
+      EchoNumbers: ~
+      EchoTime: ~
+      RepetitionTime: ~
+      ImageType: ~
+      ProtocolName: ~
+      PhaseEncodingDirection: ~
+    bids: &fmapbids
+      acq_label: <SeriesDescription>
+      run_index: <<1>>
+      dir_label: ~
+      suffix: magnitude
+      IntendedFor: ~
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: magnitude1
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: magnitude2
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: phasediff
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: phase1
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: phase2
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: fieldmap
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      dir_label: <InPlanePhaseEncodingDirection>
+  - attributes: *fmapattributes
+    bids:
+      <<: *fmapbids
+      suffix: epi
+    # TODO: sub-<participant_label>[_ses-<session_label>][_acq-<label>]_dir-<dir_label>[_run-<run_index>]_epi.nii[.gz]
+
+  beh:        # ----------------------- All behavioural data ---------------------
+  - attributes: &behattributes
+      SeriesDescription: ~
+      SequenceVariant: ~
+      SequenceName: ~
+      ScanningSequence: ~
+      MRAcquisitionType: ~
+      FlipAngle: ~
+      EchoNumbers: ~
+      EchoTime: ~
+      RepetitionTime: ~
+      ImageType: ~
+      ProtocolName: ~
+    bids: &behbids
+      task_name: <SeriesDescription>
+      suffix: ~
+
+  pet:        # ----------------------- All PET series ---------------------------
+  - attributes: &petattributes
+      SeriesDescription: ~
+      Radiopharmaceutical: ~
+      SliceThickness: ~
+      PixelSpacing: ~
+      Rows: ~
+      Columns: ~
+      ImageType: ~
+    bids: &petbids
+      task_label: <SeriesDescription>
+      acq_label: <Radiopharmaceutical>
+      rec_label: ~
+      run_index: <<1>>
+      suffix: pet
+
+  extra_data: # ----------------------- All extra data ---------------------------
+  - attributes:
+      SeriesDescription: ~
+      SequenceVariant: ~
+      SequenceName: ~
+      ScanningSequence: ~
+      MRAcquisitionType: ~
+      FlipAngle: ~
+      EchoNumbers: ~
+      EchoTime: ~
+      RepetitionTime: ~
+      ImageType: ~
+      ProtocolName: ~
+      PhaseEncodingDirection: ~
+    bids:
+      acq_label: <SeriesDescription>
+      rec_label: ~
+      ce_label: ~
+      task_label: ~
+      echo_index: ~
+      dir_label: ~
+      run_index: <<1>>
+      suffix: ~
+      mod_label: ~
+      modality_label: ~
+
+
+PAR: ~
+# --------------------------------------------------------------------------------
+# PAR key-value heuristics (Philips PAR fields that are mapped to the BIDS labels)
+# --------------------------------------------------------------------------------
+
+
+P7: ~
+# --------------------------------------------------------------------------------
+# P*.7 key-value heuristics (GE fields that are mapped to the BIDS labels)
+# --------------------------------------------------------------------------------
+
+
+Nifti: ~
+# --------------------------------------------------------------------------------
+# Nifti key-value heuristics (Nifti fields that are mapped to the BIDS labels)
+# --------------------------------------------------------------------------------
+
+
+FileSystem:
+# --------------------------------------------------------------------------------
+# File system key-value heuristics (these file- and foldernames will be mapped
+# to the BIDS labels; Special substitutions can be performed using python's
+# Format Specification Mini-Language)
+# --------------------------------------------------------------------------------
+  participant_label: ~
+  session_label: ~
+  anat:       # ----------------------- All anatomical series --------------------
+  - attributes: &anatattributes_file
+      FolderName: ~
+      FileName: ~
+      FileExt: ~
+    bids: &anatbids_file
+      acq_label: <FileName>
+      rec_label: ~
+      ce_label: ~
+      task_label: ~
+      echo_index: ~
+      dir_label: ~
+      run_index: <<1>>
+      suffix: ~
+      mod_label: ~
+      modality_label: T1w
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: T2w
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: T1rho
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: T1map
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: T2map
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: T2star
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: FLAIR
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: FLASH
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: PD
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: PDmap
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: PDT2
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: inplaneT1
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: inplaneT2
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: angio
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: defacemask
+  - attributes: *anatattributes_file
+    bids:
+      <<: *anatbids_file
+      modality_label: SWImagandphase
+
+  func:       # ----------------------- All functional series --------------------
+  - attributes: &funcattributes_file
+      FolderName: ~
+      FileName: ~
+      FileExt: ~
+    bids: &funcbids_file
+      task_label: <FileName>
+      acq_label: ~
+      rec_label: ~
+      run_index: <<1>>
+      echo_index: ~
+      suffix: bold
+  - attributes: *funcattributes_file
+    bids:
+      <<: *funcbids_file
+      suffix: sbref
+  - attributes: *funcattributes_file
+    bids:
+      <<: *funcbids_file
+      suffix: events
+  - attributes: *funcattributes_file
+    bids:
+      <<: *funcbids_file
+      recording_label: <FileName>
+      suffix: physio
+  - attributes: *funcattributes_file
+    bids:
+      <<: *funcbids_file
+      recording_label: <FileName>
+      suffix: stim
+
+  dwi:        # ----------------------- All diffusion series ---------------------
+  - attributes: &dwiattributes_file
+      FolderName: ~
+      FileName: ~
+      FileExt: ~
+    bids: &dwibids_file
+      acq_label: <FileName>
+      run_index: <<1>>
+      suffix: dwi
+
+  fmap:       # ----------------------- All fieldmap series ----------------------
+  - attributes: &fmapattributes_file
+      FolderName: ~
+      FileName: ~
+      FileExt: ~
+    bids: &fmapbids_file
+      acq_label: <FileName>
+      run_index: <<1>>
+      dir_label: ~
+      suffix: magnitude1
+      IntendedFor: ~
+  - attributes: *fmapattributes_file
+    bids:
+      <<: *fmapbids_file
+      suffix: magnitude2
+  - attributes: *fmapattributes_file
+    bids:
+      <<: *fmapbids_file
+      suffix: phasediff
+  - attributes: *fmapattributes_file
+    bids:
+      <<: *fmapbids_file
+      suffix: phase1
+  - attributes: *fmapattributes_file
+    bids:
+      <<: *fmapbids_file
+      suffix: phase2
+  - attributes: *fmapattributes_file
+    bids:
+      <<: *fmapbids_file
+      suffix: magnitude
+  - attributes: *fmapattributes_file
+    bids:
+      <<: *fmapbids_file
+      suffix: fieldmap
+      # TODO: sub-<participant_label>[_ses-<session_label>][_acq-<label>]_dir-<dir_label>[_run-<run_index>]_epi.nii[.gz]
+
+  beh:        # ----------------------- All behavioural data ---------------------
+  - attributes:
+      FolderName: ~
+      FileName: ~
+      FileExt: ~
+    bids:
+      task_label: <FileName>
+      suffix: ~
+
+  extra_data: # ----------------------- All extra data ---------------------------
+  - attributes:
+      FolderName: ~
+      FileName: ~
+      FileExt: ~
+    bids:
+      acq_label: <SeriesDescription>
+      rec_label: ~
+      ce_label: ~
+      task_label: ~
+      echo_index: ~
+      dir_label: ~
+      run_index: <<1>>
+      suffix: ~
+      mod_label: ~
+      modality_label: ~
+
+
+PlugIn: ~
+# --------------------------------------------------------------------------------
+# List of plugins to edit the key-value heuristics / perform additional operations
+# --------------------------------------------------------------------------------
