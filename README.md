@@ -6,6 +6,7 @@ birc-bids provides a Docker/Singularity container with various BIDS conversion u
 
 ### Conversion
 
+- [BIDScoin](https://github.com/Donders-Institute/bidscoin)
 - [dcm2niix](https://github.com/rordenlab/dcm2niix)
 - [Dcm2Bids](https://github.com/cbedetti/Dcm2Bids)
 - [bidskit](https://github.com/jmtyszka/bidskit)
