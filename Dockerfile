@@ -32,9 +32,7 @@ RUN curl -LO https://github.com/rordenlab/dcm2niix/releases/download/v1.0.201811
 RUN pip install dcm2bids
 
 # bidskit
-WORKDIR /usr/local
-RUN git clone https://github.com/jmtyszka/bidskit.git
-ENV PATH="$PATH:/usr/local/bidskit"
+RUN pip install bidskit
 
 # heudiconv
 RUN pip install https://github.com/nipy/heudiconv/archive/master.zip
@@ -43,13 +41,12 @@ RUN pip install https://github.com/nipy/heudiconv/archive/master.zip
 # bids-tools
 WORKDIR /usr/local
 RUN git clone https://github.com/robertoostenveld/bids-tools.git
-ENV PATH="$PATH:/usr/local/bids-tools"
+ENV PATH="$PATH:/usr/local/bids-tools/bin"
 
 # validator
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -yq nodejs
-
-RUN pip install bids_validator
-RUN npm install -g bids-validator
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -yq nodejs &&\
+pip install bids_validator &&\
+npm install -g bids-validator
 
 # bind points
 RUN mkdir /input && mkdir /output && mkdir /scripts && mkdir /scratch && \
