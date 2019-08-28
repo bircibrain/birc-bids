@@ -58,6 +58,7 @@ RUN git clone https://github.com/Donders-Institute/bidscoin.git
 COPY ./bidsmap_template.yaml /tmp/bidscoin/heuristics/
 RUN cd bidscoin && python setup.py install
 
+RUN apt-get install -yq libgl1-mesa-glx
 
 # Cleanup
 #RUN apt-get clean && \
