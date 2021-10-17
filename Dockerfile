@@ -17,15 +17,15 @@ RUN apt-get update -y && \
 
 WORKDIR /tmp
 ENV PATH="/usr/local/miniconda/bin:$PATH"
-RUN curl -LO https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-	bash Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/miniconda && \
+RUN curl -LO https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh && \
+	bash Miniconda3-py38_4.10.3-Linux-x86_64.sh -b -p /usr/local/miniconda && \
 	conda config --add channels conda-forge && \
 	conda install -y nibabel nipype pydicom
 RUN pip install pybids
 
 # dcm2niix
-RUN curl -LO https://github.com/rordenlab/dcm2niix/releases/download/v1.0.20181125/dcm2niix_25-Nov-2018_lnx.zip  && \
-	unzip dcm2niix_25-Nov-2018_lnx.zip && \
+RUN curl -LO https://github.com/rordenlab/dcm2niix/releases/download/v1.0.20180622/dcm2niix_27-Jun-2018_lnx.zip  && \
+	unzip dcm2niix_27-Jun-2018_lnx.zip && \
 	mv dcm2niix /usr/local/bin
 
 # dcm2bids
@@ -53,10 +53,12 @@ RUN mkdir /input && mkdir /output && mkdir /scripts && mkdir /scratch && \
     mkdir /data
 
 # BIDScoin
+
 WORKDIR /tmp
-RUN git clone https://github.com/Donders-Institute/bidscoin.git
-COPY ./bidsmap_template.yaml /tmp/bidscoin/heuristics/
-RUN cd bidscoin && python setup.py install
+RUN curl -LO https://github.com/Donders-Institute/bidscoin/archive/refs/tags/3.6.3.zip  && \
+	unzip 3.6.3.zip
+COPY ./bidsmap_template.yaml /tmp/bidscoin-3.6.3/bidscoin/heuristics/
+RUN cd bidscoin-3.6.3 && python setup.py install
 
 RUN apt-get install -yq libgl1-mesa-glx
 
